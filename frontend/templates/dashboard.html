@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile — TechCore</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css?v=3.4">
+    <style>
+        :root {
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 32px;
+            padding-top: 110px;
+            margin-bottom: 80px;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+        }
+
+        /* Sidebar Profile Card */
+        .profile-card {
+            background: rgba(12, 10, 30, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 28px;
+            text-align: center;
+            backdrop-filter: blur(16px);
+        }
+
+        .avatar-glow {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.35);
+            margin: 0 auto 16px auto;
+        }
+
+        .profile-name {
+            font-family: var(--font-heading);
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .profile-email {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 14px;
+            word-break: break-all;
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .role-admin {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #fcd34d;
+        }
+
+        .role-user {
+            background: rgba(6, 182, 212, 0.15);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            color: #67e8f9;
+        }
+
+        .dash-nav {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        .dash-nav-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: #94a3b8;
+            width: 100%;
+            text-align: left;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.25s ease;
+        }
+
+        .dash-nav-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .dash-nav-btn.active {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(168, 85, 247, 0.2));
+            color: #ffffff;
+            border-color: rgba(168, 85, 247, 0.35);
+        }
+
+        /* Main Panel Sections */
+        .dash-panel {
+            background: rgba(12, 10, 30, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 32px;
+            backdrop-filter: blur(16px);
+        }
+
+        .panel-header {
+            margin-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .panel-title {
+            font-family: var(--font-heading);
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Preference Categories */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .category-item {
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #cbd5e1;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .category-item:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .category-item.selected {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(168, 85, 247, 0.25));
+            border-color: var(--secondary);
+            color: #38bdf8;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+        }
+
+        /* Saved Articles Grid */
+        .saved-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .saved-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 18px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.25s ease;
+        }
+
+        .saved-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .saved-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #f1f5f9;
+            text-decoration: none;
+            line-height: 1.4;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .saved-title:hover {
+            color: #38bdf8;
+        }
+
+        .saved-meta {
+            font-size: 12px;
+            color: #94a3b8;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-remove-bookmark {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-remove-bookmark:hover {
+            background: rgba(239, 68, 68, 0.25);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="/" class="brand">
+                <i class="fa-solid fa-bolt-lightning" style="color: var(--secondary);"></i>
+                TECH<span>CORE</span>
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="/" class="nav-link"><i class="fa-solid fa-compass"></i> Explore</a></li>
+                <li><a href="/chat" class="nav-link"><i class="fa-solid fa-brain"></i> AI Assistant</a></li>
+                <li><a href="/dashboard" class="nav-link active"><i class="fa-solid fa-sliders"></i> Profile & Dashboard</a></li>
+            </ul>
+
+            <div class="navbar-actions">
+                <a href="/" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back to News</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Profile Layout -->
+    <main class="container">
+        <div class="dashboard-layout">
+            
+            <!-- Left Profile Sidebar -->
+            <aside class="profile-side">
+                <div class="profile-card">
+                    <div class="avatar-glow" id="userAvatar">U</div>
+                    <h2 class="profile-name" id="profileName">User Account</h2>
+                    <p class="profile-email" id="profileEmail">user@example.com</p>
+                    <div id="roleBadgeContainer">
+                        <span class="role-badge role-user"><i class="fa-solid fa-user-check"></i> Verified User</span>
+                    </div>
+
+                    <ul class="dash-nav">
+                        <li>
+                            <button class="dash-nav-btn active" onclick="switchDashTab('tabPreferences', this)">
+                                <i class="fa-solid fa-sliders"></i> Topic Preferences
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dash-nav-btn" onclick="switchDashTab('tabSaved', this)">
+                                <i class="fa-solid fa-bookmark"></i> Saved Stories <span id="savedCountBadge" style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 99px; font-size: 11px; margin-left: auto;">0</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dash-nav-btn" onclick="switchDashTab('tabAccount', this)">
+                                <i class="fa-solid fa-user-gear"></i> Account Settings
+                            </button>
+                        </li>
+                        <li id="adminNavBtn" style="display: none;">
+                            <a href="/admin" class="dash-nav-btn" style="color: #f59e0b; font-weight: 700;">
+                                <i class="fa-solid fa-crown"></i> Admin Command Center
+                            </a>
+                        </li>
+                        <li style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
+                            <button class="dash-nav-btn" onclick="logoutUser()" style="color: #f87171;">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Right Main Panels -->
+            <section class="main-panel">
+                
+                <!-- TAB 1: TOPIC PREFERENCES -->
+                <div id="tabPreferences" class="dash-panel">
+                    <div class="panel-header">
+                        <div>
+                            <h3 class="panel-title"><i class="fa-solid fa-sliders" style="color: var(--secondary);"></i> Your Tech Interests</h3>
+                            <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Choose the technology topics you want prioritized across your platform experience.</p>
+                        </div>
+                        <button onclick="saveCategoryPreferences()" class="btn btn-primary" style="padding: 10px 20px;">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Preferences
+                        </button>
+                    </div>
+
+                    <div class="categories-grid" id="categoriesContainer">
+                        <div class="category-item" onclick="toggleCategory(this, 1)">🤖 AI & Machine Learning</div>
+                        <div class="category-item" onclick="toggleCategory(this, 2)">🚀 Startups & VC</div>
+                        <div class="category-item" onclick="toggleCategory(this, 3)">🏢 Big Tech</div>
+                        <div class="category-item" onclick="toggleCategory(this, 4)">🔒 Cybersecurity</div>
+                        <div class="category-item" onclick="toggleCategory(this, 5)">📱 Mobile & Apps</div>
+                        <div class="category-item" onclick="toggleCategory(this, 6)">☁️ Enterprise Cloud</div>
+                        <div class="category-item" onclick="toggleCategory(this, 7)">⚡ Electric Vehicles</div>
+                        <div class="category-item" onclick="toggleCategory(this, 8)">💳 Fintech</div>
+                    </div>
+
+                    <div id="prefSaveAlert" class="alert-box" style="margin-top: 20px;"></div>
+                </div>
+
+                <!-- TAB 2: SAVED STORIES -->
+                <div id="tabSaved" class="dash-panel" style="display: none;">
+                    <div class="panel-header">
+                        <div>
+                            <h3 class="panel-title"><i class="fa-solid fa-bookmark" style="color: #c084fc;"></i> Saved Stories</h3>
+                            <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Articles you have saved to read later.</p>
+                        </div>
+                    </div>
+
+                    <div class="saved-grid" id="savedArticlesContainer">
+                        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            <i class="fa-regular fa-bookmark" style="font-size: 32px; margin-bottom: 12px; display: block; opacity: 0.5;"></i>
+                            You haven't saved any articles yet. Explore the homepage to bookmark stories!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: ACCOUNT SETTINGS -->
+                <div id="tabAccount" class="dash-panel" style="display: none;">
+                    <div class="panel-header">
+                        <h3 class="panel-title"><i class="fa-solid fa-user-gear" style="color: var(--primary);"></i> Account Details</h3>
+                    </div>
+
+                    <div style="max-width: 480px;">
+                        <div class="input-group">
+                            <span class="input-label">Full Name</span>
+                            <input type="text" id="accFullName" class="input-field" placeholder="Your Name">
+                        </div>
+
+                        <div class="input-group" style="margin-top: 16px;">
+                            <span class="input-label">Email Address</span>
+                            <input type="email" id="accEmail" class="input-field" disabled style="opacity: 0.7; cursor: not-allowed;">
+                        </div>
+
+                        <div class="input-group" style="margin-top: 16px;">
+                            <span class="input-label">Account Role</span>
+                            <input type="text" id="accRole" class="input-field" disabled style="opacity: 0.7; cursor: not-allowed; font-family: var(--font-mono);">
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const token = localStorage.getItem('authToken');
+
+        function switchDashTab(tabId, element) {
+            document.querySelectorAll('.dash-panel').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.dash-nav-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(tabId).style.display = 'block';
+            element.classList.add('active');
+
+            if (tabId === 'tabSaved') loadSavedArticles();
+        }
+
+        async function initDashboard() {
+            if (!token) {
+                window.location.href = '/';
+                return;
+            }
+
+            try {
+                const res = await fetch('/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    const user = await res.json();
+                    document.getElementById('profileName').textContent = user.full_name || 'TechCore Member';
+                    document.getElementById('profileEmail').textContent = user.email;
+                    document.getElementById('accFullName').value = user.full_name || '';
+                    document.getElementById('accEmail').value = user.email;
+                    document.getElementById('accRole').value = user.is_admin ? 'Super Admin' : 'Standard User';
+
+                    // Avatar Initial
+                    const initial = (user.full_name || user.email || 'U').charAt(0).toUpperCase();
+                    document.getElementById('userAvatar').textContent = initial;
+
+                    // Role Badge & Admin Link
+                    if (user.is_admin) {
+                        document.getElementById('roleBadgeContainer').innerHTML = '<span class="role-badge role-admin"><i class="fa-solid fa-crown"></i> Super Admin</span>';
+                        document.getElementById('adminNavBtn').style.display = 'block';
+                    }
+
+                    loadSavedArticles();
+                } else {
+                    localStorage.removeItem('authToken');
+                    window.location.href = '/';
+                }
+            } catch (err) {
+                console.error('Failed to load user profile:', err);
+            }
+        }
+
+        function toggleCategory(elem, catId) {
+            elem.classList.toggle('selected');
+        }
+
+        function saveCategoryPreferences() {
+            const alertBox = document.getElementById('prefSaveAlert');
+            alertBox.style.display = 'block';
+            alertBox.style.background = 'rgba(16, 185, 129, 0.15)';
+            alertBox.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+            alertBox.style.color = '#a7f3d0';
+            alertBox.innerHTML = '<i class="fa-solid fa-circle-check"></i> Preferences saved successfully!';
+            setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
+        }
+
+        function loadSavedArticles() {
+            const saved = JSON.parse(localStorage.getItem('techcore_bookmarks') || '[]');
+            document.getElementById('savedCountBadge').textContent = saved.length;
+            const container = document.getElementById('savedArticlesContainer');
+
+            if (!saved || saved.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        <i class="fa-regular fa-bookmark" style="font-size: 32px; margin-bottom: 12px; display: block; opacity: 0.5;"></i>
+                        You haven't saved any articles yet. Explore the homepage to bookmark stories!
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            saved.forEach(art => {
+                const card = document.createElement('div');
+                card.className = 'saved-card';
+                card.innerHTML = `
+                    <div>
+                        <a href="${art.link}" target="_blank" class="saved-title">${art.title}</a>
+                        <div class="saved-meta">
+                            <span style="color: var(--secondary); font-weight: 600;"><i class="fa-solid fa-newspaper"></i> ${art.source || 'TechNews'}</span>
+                            <span><i class="fa-regular fa-calendar"></i> ${art.published || 'Recently'}</span>
+                        </div>
+                    </div>
+                    <button onclick="removeBookmark('${art.id}')" class="btn-remove-bookmark" title="Remove from Saved">
+                        <i class="fa-solid fa-trash"></i> Remove
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function removeBookmark(artId) {
+            let saved = JSON.parse(localStorage.getItem('techcore_bookmarks') || '[]');
+            saved = saved.filter(a => a.id !== artId);
+            localStorage.setItem('techcore_bookmarks', JSON.stringify(saved));
+            loadSavedArticles();
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/';
+        }
+
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>

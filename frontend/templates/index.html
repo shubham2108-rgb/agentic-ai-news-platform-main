@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechCore — Agentic AI News & Intelligence Platform</title>
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Core Stylesheet with Cache Busting -->
+    <link rel="stylesheet" href="/static/css/style.css?v=3.4">
+    
+    <!-- Three.js for 3D Interactive WebGL Experience -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        :root {
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        /* 3D Canvas */
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            display: block;
+            transition: opacity 0.4s ease;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 0 40px 0;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* =========================================================
+           Live Calendar, IST Clock & Tech History Flashcard Critical CSS
+           ========================================================= */
+        .hero-date-calendar {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            position: relative;
+            z-index: 15;
+        }
+
+        /* =========================================================
+           HERO INFO BAR (Option A: Center-Aligned, Compact & Cohesive)
+           ========================================================= */
+        .hero-info-bar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 0 auto 16px auto;
+            position: relative;
+            z-index: 15;
+            flex-wrap: wrap;
+        }
+
+        /* 1. MERGED DATE + TIME BOX (Left Side - Compact) */
+        .hero-datetime-box {
+            display: inline-flex;
+            align-items: center;
+            background: #131a2c;
+            border: 1px solid #2a3350;
+            border-radius: 10px;
+            padding: 8px 14px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+            transition: border-color 0.25s ease, transform 0.25s ease;
+        }
+
+        .hero-datetime-box:hover {
+            border-color: #3b486e;
+            transform: translateY(-1px);
+        }
+
+        .datetime-date-group,
+        .datetime-time-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            white-space: nowrap;
+        }
+
+        .datetime-icon {
+            color: #5b8def;
+            font-size: 13.5px;
+            flex-shrink: 0;
+        }
+
+        .datetime-date-text {
+            color: #e6e9f2;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.1px;
+        }
+
+        .datetime-divider {
+            width: 1px;
+            height: 14px;
+            background: #2a3350;
+            margin: 0 8px;
+            flex-shrink: 0;
+        }
+
+        .datetime-time-text {
+            color: #5b8def;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: var(--font-mono, 'JetBrains Mono', monospace);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .datetime-tz-text {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            opacity: 0.95;
+        }
+
+        /* 2. TECH FACT CARD (Right Side - Compact) */
+        .hero-tech-fact-card {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #131a2c;
+            border: 1px solid #2a3350;
+            border-radius: 10px;
+            padding: 6px 12px 6px 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+            outline: none;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .hero-tech-fact-card:hover {
+            border-color: rgba(245, 167, 66, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 66, 0.15), 0 2px 8px rgba(0, 0, 0, 0.3);
+            background: #172036;
+        }
+
+        .hero-tech-fact-card.active {
+            border-color: #f5a742;
+            background: #1a233a;
+            box-shadow: 0 0 18px rgba(245, 167, 66, 0.25);
+        }
+
+        .tech-fact-icon-badge {
+            width: 26px;
+            height: 26px;
+            border-radius: 7px;
+            background: linear-gradient(135deg, #f59e42 0%, #e8536b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 11.5px;
+            box-shadow: 0 2px 6px rgba(245, 158, 66, 0.35);
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-tech-fact-card:hover .tech-fact-icon-badge {
+            transform: scale(1.08) rotate(6deg);
+        }
+
+        .tech-fact-text-stack {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            line-height: 1.15;
+        }
+
+        .tech-fact-eyebrow {
+            font-size: 9px;
+            font-weight: 700;
+            color: #f5a742;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+
+        .tech-fact-title {
+            font-size: 12.5px;
+            font-weight: 500;
+            color: #e6e9f2;
+            white-space: nowrap;
+        }
+
+        .tech-fact-explore-btn {
+            background: #f5a742;
+            border: none;
+            border-radius: 999px;
+            padding: 4px 10px;
+            min-height: 28px;
+            min-width: 58px;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #131a2c;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(245, 167, 66, 0.3);
+            flex-shrink: 0;
+            margin-left: 2px;
+            font-family: inherit;
+        }
+
+        .hero-tech-fact-card:hover .tech-fact-explore-btn {
+            background: #ffb854;
+            transform: scale(1.03);
+            box-shadow: 0 3px 10px rgba(245, 167, 66, 0.5);
+        }
+
+        .hero-tech-fact-card.active .tech-fact-explore-btn {
+            background: #e8536b;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(232, 83, 107, 0.4);
+        }
+
+        /* Secondary Row for Badges */
+        .hero-meta-badges {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .live-edition-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 7px 15px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #34d399;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .live-status-dot {
+            width: 7px;
+            height: 7px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+            animation: livePulse 2s infinite;
+        }
+
+        @keyframes livePulse {
+            0% { opacity: 0.4; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 12px #34d399; }
+            100% { opacity: 0.4; transform: scale(0.9); }
+        }
+
+        /* 💡 "This Day in Tech History" Flashcard */
+        .tech-history-card {
+            display: none;
+            max-width: 680px;
+            margin: 0 auto 22px auto;
+            background: linear-gradient(135deg, rgba(26, 16, 51, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 1px solid rgba(168, 85, 247, 0.45);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 30px rgba(168, 85, 247, 0.2);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 20px;
+            padding: 20px 24px;
+            text-align: left;
+            position: relative;
+            z-index: 20;
+            animation: fadeInSlide 0.35s cubic-bezier(0.15, 0.83, 0.66, 1);
+        }
+
+        .tech-history-card.active {
+            display: block;
+        }
+
+        @keyframes fadeInSlide {
+            0% { opacity: 0; transform: translateY(-10px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .history-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #c084fc;
+            letter-spacing: 0.5px;
+        }
+
+        .history-year-pill {
+            background: rgba(168, 85, 247, 0.25);
+            border: 1px solid rgba(168, 85, 247, 0.45);
+            color: #e9d5ff;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .history-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-history-next {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 14px;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.25s;
+        }
+
+        .btn-history-next:hover {
+            background: rgba(168, 85, 247, 0.25);
+            border-color: rgba(168, 85, 247, 0.5);
+            color: #fff;
+            transform: scale(1.02);
+        }
+
+        .btn-history-close {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            font-size: 14px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .btn-history-close:hover {
+            color: #fff;
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .history-title {
+            font-family: var(--font-heading);
+            font-size: 17px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+            line-height: 1.35;
+        }
+
+        .history-fact {
+            font-size: 13.5px;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 14px;
+        }
+
+        .history-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 10px;
+            font-size: 12px;
+        }
+
+        .history-source {
+            color: #94a3b8;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .history-chat-link {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .history-chat-link:hover {
+            color: #c084fc;
+            text-decoration: underline;
+        }
+
+        .hero-badge-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(168, 85, 247, 0.12);
+            border: 1px solid rgba(168, 85, 247, 0.35);
+            border-radius: 999px;
+            padding: 6px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #d8b4fe;
+            margin-bottom: 20px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);
+            animation: floatSlow 4s ease-in-out infinite alternate;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981, 0 0 20px #10b981;
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        @keyframes floatSlow {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-5px); }
+        }
+
+        .hero h1 {
+            font-family: var(--font-heading);
+            font-size: clamp(38px, 6.5vw, 68px);
+            font-weight: 900;
+            letter-spacing: -2.5px;
+            line-height: 1.08;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero h1 span.gradient-text {
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            filter: drop-shadow(0 0 35px rgba(129, 140, 248, 0.35));
+        }
+
+        /* Search Input Box */
+        .search-container {
+            max-width: 620px;
+            margin: 0 auto 36px auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-bar-wrapper {
+            position: relative;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
+            padding: 1px;
+            transition: all 0.35s ease;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .search-bar-wrapper:focus-within {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.35), 0 12px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 18px 24px 18px 56px;
+            font-size: 15px;
+            border-radius: 999px;
+            background: rgba(8, 6, 26, 0.85);
+            border: none;
+            color: #f8fafc;
+            backdrop-filter: blur(20px);
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        .search-shortcut {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: #94a3b8;
+            pointer-events: none;
+        }
+
+        /* Hero Spotlight Visual Banner */
+        .hero-spotlight {
+            max-width: 1000px;
+            margin: 0 auto;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 40px rgba(168, 85, 247, 0.15);
+            height: 260px;
+        }
+
+        .hero-spotlight img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.75) contrast(1.1);
+            transition: transform 0.6s ease;
+        }
+
+        .hero-spotlight:hover img {
+            transform: scale(1.03);
+        }
+
+        .hero-spotlight-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(3, 0, 20, 0.2) 0%, rgba(3, 0, 20, 0.9) 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 24px 32px;
+            justify-content: space-between;
+        }
+
+        .spotlight-info {
+            text-align: left;
+        }
+
+        .spotlight-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(6, 182, 212, 0.2);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            color: #67e8f9;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .spotlight-title {
+            font-family: var(--font-heading);
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        /* 3D FX Toggle Button */
+        .btn-3d-toggle {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #e2e8f0;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-3d-toggle:hover {
+            background: rgba(168, 85, 247, 0.2);
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-3d-toggle.active {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(168, 85, 247, 0.25));
+            border-color: var(--secondary);
+            color: #38bdf8;
+        }
+
+        /* Category Filter Pills */
+        .category-filter {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 48px;
+            margin-bottom: 36px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .category-filter .pill {
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            backdrop-filter: blur(12px);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+        }
+
+        .category-filter .pill:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #f1f5f9;
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .category-filter .pill.active {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4), 0 0 10px rgba(6, 182, 212, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Article Card 3D Perspective & Layout */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .article-wrapper {
+            perspective: 1000px;
+        }
+
+        .article-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: rgba(12, 10, 30, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: transform 0.15s ease-out, box-shadow 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .article-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.08), transparent 40%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .article-card:hover::after {
+            opacity: 1;
+        }
+
+        .article-card:hover {
+            border-color: rgba(168, 85, 247, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 
+                        0 0 25px rgba(168, 85, 247, 0.25);
+        }
+
+        .article-image-container {
+            position: relative;
+            width: 100%;
+            height: 210px;
+            overflow: hidden;
+            background: #09071b;
+        }
+
+        .article-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .article-card:hover .article-image {
+            transform: scale(1.06);
+        }
+
+        /* Source Badges */
+        .source-badge {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            backdrop-filter: blur(12px);
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .source-techcrunch {
+            background: rgba(16, 185, 129, 0.25);
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            color: #6ee7b7;
+        }
+
+        .source-verge {
+            background: rgba(236, 72, 153, 0.25);
+            border: 1px solid rgba(236, 72, 153, 0.5);
+            color: #f472b6;
+        }
+
+        .source-wired {
+            background: rgba(6, 182, 212, 0.25);
+            border: 1px solid rgba(6, 182, 212, 0.5);
+            color: #67e8f9;
+        }
+
+        .source-ars {
+            background: rgba(245, 158, 11, 0.25);
+            border: 1px solid rgba(245, 158, 11, 0.5);
+            color: #fcd34d;
+        }
+
+        .source-default {
+            background: rgba(168, 85, 247, 0.25);
+            border: 1px solid rgba(168, 85, 247, 0.5);
+            color: #d8b4fe;
+        }
+
+        .reading-time-badge {
+            position: absolute;
+            bottom: 14px;
+            right: 14px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #cbd5e1;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            backdrop-filter: blur(8px);
+        }
+
+        .article-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+
+        .article-title {
+            font-family: var(--font-heading);
+            font-size: 19px;
+            font-weight: 700;
+            line-height: 1.38;
+            color: #f8fafc;
+            margin-bottom: 14px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            transition: color 0.3s;
+        }
+
+        .article-card:hover .article-title {
+            color: #38bdf8;
+        }
+
+        /* Focused AI Key Takeaway Summary Box */
+        .ai-summary-card {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-left: 4px solid var(--secondary);
+            border-radius: 0 12px 12px 0;
+            padding: 12px 16px;
+            margin-top: auto;
+            margin-bottom: 16px;
+        }
+
+        .ai-summary-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--secondary);
+            margin-bottom: 8px;
+        }
+
+        .ai-summary-content {
+            font-size: 13.5px;
+            color: #f1f5f9;
+            line-height: 1.6;
+            white-space: normal;
+        }
+
+        .article-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            margin-top: auto;
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        .read-more-link {
+            color: var(--secondary);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: gap 0.2s;
+        }
+
+        .article-card:hover .read-more-link {
+            gap: 10px;
+            color: #38bdf8;
+        }
+    </style>
+</head>
+<body>
+    <!-- 3D Interactive WebGL Canvas -->
+    <canvas id="three-canvas"></canvas>
+    <div class="ambient-glow-layer"></div>
+
+    <!-- Sticky Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="/" class="brand">
+                <i class="fa-solid fa-bolt-lightning" style="color: var(--secondary);"></i>
+                TECH<span>CORE</span>
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="/" class="nav-link active"><i class="fa-solid fa-compass"></i> Explore</a></li>
+                <li><a href="/chat" class="nav-link"><i class="fa-solid fa-brain"></i> AI Assistant</a></li>
+                <li id="dashboardLink" style="display: none;"><a href="/dashboard" class="nav-link"><i class="fa-solid fa-sliders"></i> Dashboard</a></li>
+            </ul>
+
+            <div class="navbar-actions">
+                <!-- 3D FX Interactive Toggle Button -->
+                <button id="toggle3DBtn" class="btn-3d-toggle active" onclick="toggle3DParticles()" title="Toggle Interactive 3D Particles">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> <span>3D FX: ON</span>
+                </button>
+
+                <div id="authActions">
+                    <button onclick="showAuthModal()" class="btn btn-primary">
+                        <i class="fa-solid fa-user-lock"></i> Login / Register
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Infinite News Marquee Ticker -->
+    <div class="ticker-wrap" style="margin-top: 72px;">
+        <div class="ticker">
+            {% for article in articles[:5] %}
+            <div class="ticker-item">
+                <strong><i class="fa-solid fa-bolt"></i> TRENDING:</strong> {{ article.title }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container">
+            <!-- Redesigned Hero Info Bar: Option A (Merged Date/Time Box + Separated Tech Fact Card) -->
+            <div class="hero-info-bar">
+                <!-- 1. Merged Date + Time Box (Left Side) -->
+                <div class="hero-datetime-box" title="Current Local Date & Live IST Time">
+                    <div class="datetime-date-group">
+                        <i class="fa-regular fa-calendar-check datetime-icon"></i>
+                        <span class="datetime-date-text">
+                            <span id="currentDayOfWeek">Sunday</span>,
+                            <span id="currentDateMonth">06 September</span>
+                            <span id="currentYear">2026</span>
+                        </span>
+                    </div>
+
+                    <div class="datetime-divider" aria-hidden="true"></div>
+
+                    <div class="datetime-time-group">
+                        <i class="fa-regular fa-clock datetime-icon"></i>
+                        <span class="datetime-time-text">
+                            <span id="liveDigitalClock">02:36:59</span>
+                            <span class="datetime-tz-text">IST</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 2. Tech Fact Feature Card (Right Side) -->
+                <div id="techFactToggleBtn" class="hero-tech-fact-card" onclick="toggleTechHistoryCard(event)" role="button" tabindex="0" aria-expanded="false" aria-controls="techHistoryContainer" title="Click to reveal / hide This Day in Tech History">
+                    <div class="tech-fact-icon-badge">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <div class="tech-fact-text-stack">
+                        <span class="tech-fact-eyebrow">TODAY'S TECH FACT</span>
+                        <span class="tech-fact-title">Historic Milestone</span>
+                    </div>
+                    <button class="tech-fact-explore-btn" tabindex="-1">
+                        <span class="explore-btn-text">Explore</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 💡 Expandable "This Day in Tech History" AI Flashcard -->
+            <div id="techHistoryContainer" class="tech-history-card">
+                <div class="history-header">
+                    <div class="history-tag">
+                        <i class="fa-solid fa-wand-magic-sparkles" style="color: #c084fc;"></i>
+                        <span>THIS DAY IN TECH HISTORY</span>
+                        <span id="historyYear" class="history-year-pill">1977</span>
+                    </div>
+                    <div class="history-actions">
+                        <button onclick="nextTechHistoryMilestone(event)" class="btn-history-next" title="Load Next Milestone">
+                            <i class="fa-solid fa-rotate"></i> <span>Next Milestone</span>
+                        </button>
+                        <button onclick="toggleTechHistoryCard(event)" class="btn-history-close" title="Close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="history-body">
+                    <h3 id="historyTitle" class="history-title">NASA Launches Voyager 1 Space Probe</h3>
+                    <p id="historyFact" class="history-fact">
+                        "Equipped with the iconic Golden Record and cutting-edge 1970s digital computers, Voyager 1 launched to explore interstellar space and became the farthest human-made object in history."
+                    </p>
+                </div>
+
+                <div class="history-footer">
+                    <span class="history-source"><i class="fa-solid fa-microchip" style="color: var(--secondary);"></i> Autonomous History Curator</span>
+                    <a href="/chat" class="history-chat-link"><i class="fa-solid fa-brain"></i> Ask AI Assistant ➔</a>
+                </div>
+            </div>
+
+            <!-- Secondary Sub-Row: Edition & Intelligence Badges -->
+            <div class="hero-meta-badges">
+                <div class="live-edition-chip">
+                    <span class="live-status-dot"></span>
+                    <span>Global Tech Edition</span>
+                </div>
+                <div class="hero-badge-container">
+                    <span class="pulse-dot"></span>
+                    <span>Real-Time Multi-Source AI Intelligence</span>
+                </div>
+            </div>
+
+            <h1>Autonomous <span class="gradient-text">Tech Intelligence</span></h1>
+
+            <!-- Glowing Search Bar with Shortcut -->
+            <div class="search-container">
+                <div class="search-bar-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="searchArticles" class="search-bar" placeholder="Search breaking tech stories, AI models, startups..." oninput="filterArticles()">
+                    <span class="search-shortcut">/</span>
+                </div>
+            </div>
+
+            <!-- Spotlight Real News Visual Showcase Photo -->
+            <div class="hero-spotlight">
+                <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1400&auto=format&fit=crop&q=85" alt="Global Tech Journalism and Breaking News Network" loading="eager">
+                <div class="hero-spotlight-overlay">
+                    <div class="spotlight-info">
+                        <span class="spotlight-tag"><i class="fa-solid fa-newspaper"></i> Global News Intelligence</span>
+                        <h2 class="spotlight-title">Synthesizing Real-Time Tech Journalism Across Global Publishers</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <main class="container">
+        <!-- Category Filter Pills with Emojis -->
+        <div class="category-filter">
+            <a class="pill active" onclick="filterCategory('All', this)">🌐 All Stories</a>
+            <a class="pill" onclick="filterCategory('Artificial Intelligence', this)">🤖 AI & Machine Learning</a>
+            <a class="pill" onclick="filterCategory('Big Tech', this)">🏢 Big Tech</a>
+            <a class="pill" onclick="filterCategory('Startups & Funding', this)">🚀 Startups & VC</a>
+            <a class="pill" onclick="filterCategory('Hardware & Gadgets', this)">💻 Hardware & Chips</a>
+            <a class="pill" onclick="filterCategory('Science & Space', this)">🪐 Science & Space</a>
+            <a class="pill" onclick="filterCategory('Gaming', this)">🎮 Gaming</a>
+            <a class="pill" onclick="filterCategory('Cybersecurity', this)">🔒 Cybersecurity</a>
+            <a class="pill" onclick="filterCategory('Mobile & Apps', this)">📱 Mobile & Apps</a>
+            <a class="pill" onclick="filterCategory('Enterprise & SaaS', this)">☁️ Enterprise Cloud</a>
+            <a class="pill" onclick="filterCategory('Electric Vehicles', this)">⚡ Electric Vehicles</a>
+            <a class="pill" onclick="filterCategory('Fintech', this)">💳 Fintech</a>
+        </div>
+
+        <!-- 3D News Card Grid -->
+        <div class="news-grid" id="articlesGrid">
+            {% for article in articles %}
+            <!-- Article Wrapper with Data Categories -->
+            <div class="article-wrapper" data-categories="{{ article.categories | map(attribute='name') | join(',') if article.categories else '' }}">
+                <a href="{{ article.link }}" class="article-card" target="_blank">
+                    <div class="article-image-container">
+                        <!-- Dynamic Publisher Badge -->
+                        {% set src = article.source | lower if article.source else '' %}
+                        {% if 'crunch' in src %}
+                            <span class="source-badge source-techcrunch"><i class="fa-solid fa-bolt"></i> TechCrunch</span>
+                        {% elif 'verge' in src %}
+                            <span class="source-badge source-verge"><i class="fa-solid fa-v"></i> The Verge</span>
+                        {% elif 'wired' in src %}
+                            <span class="source-badge source-wired"><i class="fa-solid fa-terminal"></i> Wired</span>
+                        {% elif 'ars' in src %}
+                            <span class="source-badge source-ars"><i class="fa-solid fa-newspaper"></i> Ars Technica</span>
+                        {% else %}
+                            <span class="source-badge source-default"><i class="fa-solid fa-globe"></i> {{ article.source or 'Tech News' }}</span>
+                        {% endif %}
+
+                        <!-- Dynamic Reading Time Badge -->
+                        <span class="reading-time-badge"><i class="fa-regular fa-clock"></i> 2 min read</span>
+
+                        <img src="{{ article.image_url or 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&auto=format&fit=crop&q=60' }}" class="article-image" alt="Article image" loading="lazy">
+                    </div>
+                    
+                    <div class="article-body">
+                        <div class="article-meta">
+                            <span><i class="fa-regular fa-calendar-days" style="margin-right: 4px; color: var(--secondary);"></i> {{ article.published or 'Recently' }}</span>
+                            <span style="color: #64748b;"><i class="fa-solid fa-shield-halved"></i> Verified Source</span>
+                        </div>
+
+                        <div class="article-title">{{ article.title }}</div>
+                        
+                        <!-- Full AI Summary Box -->
+                        <div class="ai-summary-card">
+                            <div class="ai-summary-header">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Summary
+                            </div>
+                            <div class="ai-summary-content">
+                                {{ article.llm_summary if article.llm_summary else article.summary }}
+                            </div>
+                        </div>
+
+                        <div class="article-footer">
+                            <button onclick="handleBookmarkClick(this, event)" class="btn-bookmark-action" data-art-id="{{ article.id }}" data-title="{{ article.title | e }}" data-link="{{ article.link }}" data-source="{{ article.source }}" data-published="{{ article.published }}" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 4px 10px; font-size: 12px; color: #cbd5e1; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
+                                <i class="fa-regular fa-bookmark"></i> Save
+                            </button>
+                            <span class="read-more-link">Open Story <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Infinite Scroll Sentinel & Loading Indicator -->
+        <div id="infiniteScrollSentinel" style="text-align: center; padding: 30px 20px; width: 100%;">
+            <div id="infiniteScrollLoading" style="display: none; color: var(--secondary); font-weight: 600; font-size: 14px;">
+                <i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px;"></i> Loading more stories from the last 7 days...
+            </div>
+            <div id="infiniteScrollEnd" style="display: none; color: var(--text-muted); font-size: 13px;">
+                <i class="fa-solid fa-circle-check" style="color: #10b981; margin-right: 6px;"></i> You're all caught up on the last 7 days of tech news!
+            </div>
+        </div>
+    </main>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3 class="brand" id="authTitle"><i class="fa-solid fa-shield-halved"></i> Security Portal</h3>
+                <button onclick="closeAuthModal()" class="modal-close">×</button>
+            </div>
+            
+            <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+                <button id="registerTab" onclick="showRegister()" class="btn btn-primary" style="flex: 1;">Register</button>
+                <button id="loginTab" onclick="showLogin()" class="btn btn-secondary" style="flex: 1;">Login</button>
+            </div>
+            
+            <!-- Register Form -->
+            <div id="registerForm">
+                <div class="input-group">
+                    <span class="input-label">Full Name</span>
+                    <input type="text" id="regName" class="input-field" placeholder="John Doe">
+                </div>
+                <div class="input-group">
+                    <span class="input-label">Email Address</span>
+                    <input type="email" id="regEmail" class="input-field" placeholder="john@example.com">
+                </div>
+                <div class="input-group">
+                    <span class="input-label">Password</span>
+                    <input type="password" id="regPassword" class="input-field" placeholder="••••••••">
+                </div>
+                <button onclick="register()" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                    Create Account & Subscribe
+                </button>
+                
+                <div style="text-align: center; margin: 15px 0 10px 0; color: rgba(255,255,255,0.4); font-size: 11px; font-weight: 600; position: relative;">
+                    <span style="background: #1e2538; padding: 0 8px; z-index: 1; position: relative;">OR CONTINUE WITH</span>
+                    <div style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid rgba(255,255,255,0.1); z-index: 0;"></div>
+                </div>
+
+                <div id="g_id_onload"
+                     data-client_id="994573989780-ugud02vnsjftfirs1ee29i8k13th0pff.apps.googleusercontent.com"
+                     data-callback="handleGoogleSignIn"
+                     data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_blue" data-text="signin_with" data-size="large" data-logo_alignment="left" style="width: 100%; display: flex; justify-content: center;"></div>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm" style="display: none;">
+                <div class="input-group">
+                    <span class="input-label">Email Address</span>
+                    <input type="email" id="loginEmail" class="input-field" placeholder="john@example.com">
+                </div>
+                <div class="input-group">
+                    <span class="input-label">Password</span>
+                    <input type="password" id="loginPassword" class="input-field" placeholder="••••••••">
+                </div>
+                <button onclick="login()" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                    Log In to Dashboard
+                </button>
+                
+                <div style="text-align: center; margin: 15px 0 10px 0; color: rgba(255,255,255,0.4); font-size: 11px; font-weight: 600; position: relative;">
+                    <span style="background: #1e2538; padding: 0 8px; z-index: 1; position: relative;">OR CONTINUE WITH</span>
+                    <div style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid rgba(255,255,255,0.1); z-index: 0;"></div>
+                </div>
+
+                <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_blue" data-text="signin_with" data-size="large" data-logo_alignment="left" style="width: 100%; display: flex; justify-content: center;"></div>
+            </div>
+            
+            <div id="authMessage" style="margin-top: 20px; padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 500; display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Core App Scripts -->
+    <script src="/static/js/app.js"></script>
+
+    <!-- 3D Interactive Three.js Engine & Client Logic -->
+    <script>
+        /* ==========================================================================
+           Three.js Interactive 3D Particle Space System
+           ========================================================================== */
+        let scene, camera, renderer, particles, particleGeometry, particleMaterial;
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+        let is3DActive = true;
+        let animationFrameId = null;
+
+        function createCircularParticleTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            
+            const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+            gradient.addColorStop(0, 'rgba(255,255,255,1)');
+            gradient.addColorStop(0.3, 'rgba(255,255,255,0.8)');
+            gradient.addColorStop(0.6, 'rgba(168,85,247,0.35)');
+            gradient.addColorStop(1, 'rgba(0,0,0,0)');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 64, 64);
+            
+            const texture = new THREE.Texture(canvas);
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        function initThreeJS() {
+            const canvas = document.getElementById('three-canvas');
+            if (!canvas) return;
+
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 1, 3000);
+            camera.position.z = 800;
+
+            renderer = new THREE.WebGLRenderer({
+                canvas: canvas,
+                alpha: true,
+                powerPreference: "high-performance",
+                antialias: true
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Generate Particles (Adjust count based on device)
+            const isMobile = window.innerWidth < 768;
+            const particleCount = isMobile ? 900 : 2600;
+            particleGeometry = new THREE.BufferGeometry();
+            
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            const scales = new Float32Array(particleCount);
+
+            const colorPalette = [
+                new THREE.Color('#a855f7'), // Purple
+                new THREE.Color('#06b6d4'), // Cyan
+                new THREE.Color('#38bdf8'), // Sky
+                new THREE.Color('#ffffff'), // White
+                new THREE.Color('#f43f5e')  // Rose
+            ];
+
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 2200;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 2200;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 1800;
+
+                const chosenColor = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+                colors[i * 3] = chosenColor.r;
+                colors[i * 3 + 1] = chosenColor.g;
+                colors[i * 3 + 2] = chosenColor.b;
+
+                scales[i] = Math.random() * 8 + 4;
+            }
+
+            particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            particleMaterial = new THREE.PointsMaterial({
+                size: 7,
+                map: createCircularParticleTexture(),
+                transparent: true,
+                vertexColors: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                opacity: 0.85
+            });
+
+            particles = new THREE.Points(particleGeometry, particleMaterial);
+            scene.add(particles);
+
+            // Mouse Move Event Listener
+            window.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX - window.innerWidth / 2) * 0.45;
+                mouseY = (e.clientY - window.innerHeight / 2) * 0.45;
+            });
+
+            // Scroll Depth Displacement
+            window.addEventListener('scroll', () => {
+                const scrollProgress = window.scrollY / (document.body.scrollHeight - window.innerHeight || 1);
+                if (particles) {
+                    particles.position.z = scrollProgress * 300;
+                }
+            });
+
+            // Resize Listener
+            window.addEventListener('resize', onWindowResize);
+
+            // Tab Visibility Optimizer
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                } else if (is3DActive) {
+                    animate();
+                }
+            });
+
+            animate();
+        }
+
+        function onWindowResize() {
+            if (!camera || !renderer) return;
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            if (!is3DActive) return;
+            animationFrameId = requestAnimationFrame(animate);
+
+            // Smooth camera lerp on mouse move
+            targetX += (mouseX - targetX) * 0.04;
+            targetY += (mouseY - targetY) * 0.04;
+
+            camera.position.x = targetX;
+            camera.position.y = -targetY;
+            camera.lookAt(scene.position);
+
+            if (particles) {
+                particles.rotation.y += 0.0008;
+                particles.rotation.x += 0.0003;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        function toggle3DParticles() {
+            const btn = document.getElementById('toggle3DBtn');
+            const canvas = document.getElementById('three-canvas');
+            is3DActive = !is3DActive;
+
+            if (is3DActive) {
+                btn.className = 'btn-3d-toggle active';
+                btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> <span>3D FX: ON</span>';
+                if (canvas) canvas.classList.remove('disabled-3d');
+                animate();
+            } else {
+                btn.className = 'btn-3d-toggle';
+                btn.innerHTML = '<i class="fa-solid fa-power-off"></i> <span>3D FX: OFF</span>';
+                if (canvas) canvas.classList.add('disabled-3d');
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            }
+        }
+
+        /* ==========================================================================
+           3D Interactive Card Hover Tilt Physics
+           ========================================================================== */
+        function init3DCardTilt() {
+            const cards = document.querySelectorAll('.article-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = ((y - centerY) / centerY) * -10;
+                    const rotateY = ((x - centerX) / centerX) * 10;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateZ(10px)`;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+                });
+            });
+        }
+
+        // Global Keydown Search Shortcut (Press '/' to focus search)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+                e.preventDefault();
+                const search = document.getElementById('searchArticles');
+                if (search) {
+                    search.focus();
+                    search.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+
+        /* ==========================================================================
+           Auth Check & Dynamic Navigation
+           ========================================================================== */
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            document.getElementById('dashboardLink').style.display = 'block';
+            document.getElementById('authActions').innerHTML = `
+                <a href="/dashboard" class="btn btn-outline-glow">
+                    <i class="fa-solid fa-chart-line"></i> Dashboard
+                </a>
+            `;
+            fetch('/auth/me', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            }).then(res => res.json()).then(user => {
+                if (user && user.is_admin) {
+                    const navList = document.querySelector('.nav-links');
+                    if (navList && !document.getElementById('adminLink')) {
+                        const adminItem = document.createElement('li');
+                        adminItem.id = 'adminLink';
+                        adminItem.innerHTML = '<a href="/admin" class="nav-link" style="color: #f59e0b; font-weight: 600;"><i class="fa-solid fa-crown"></i> Admin</a>';
+                        navList.appendChild(adminItem);
+                    }
+                }
+            }).catch(() => {});
+        }
+
+        /* ==========================================================================
+           7-Day Infinite Scroll & Dynamic Progressive Feed (40 per batch)
+           ========================================================================== */
+        let feedPage = 1;
+        let feedLoading = false;
+        let feedHasMore = true;
+        let currentCategory = 'All';
+        let searchDebounce = null;
+
+        function getPublisherBadgeHTML(source) {
+            const src = (source || '').toLowerCase();
+            if (src.includes('crunch')) {
+                return '<span class="source-badge source-techcrunch"><i class="fa-solid fa-bolt"></i> TechCrunch</span>';
+            } else if (src.includes('verge')) {
+                return '<span class="source-badge source-verge"><i class="fa-solid fa-v"></i> The Verge</span>';
+            } else if (src.includes('wired')) {
+                return '<span class="source-badge source-wired"><i class="fa-solid fa-terminal"></i> Wired</span>';
+            } else if (src.includes('ars')) {
+                return '<span class="source-badge source-ars"><i class="fa-solid fa-newspaper"></i> Ars Technica</span>';
+            } else {
+                return `<span class="source-badge source-default"><i class="fa-solid fa-globe"></i> ${source || 'Tech News'}</span>`;
+            }
+        }
+
+        function buildCardElement(art) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'article-wrapper';
+            wrapper.dataset.categories = (art.categories || []).join(',');
+
+            const summaryText = art.llm_summary || art.summary || 'No summary available.';
+            const imageSrc = art.image_url || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&auto=format&fit=crop&q=60';
+
+            wrapper.innerHTML = `
+                <a href="${art.link}" class="article-card" target="_blank">
+                    <div class="article-image-container">
+                        ${getPublisherBadgeHTML(art.source)}
+                        <span class="reading-time-badge"><i class="fa-regular fa-clock"></i> 2 min read</span>
+                        <img src="${imageSrc}" class="article-image" alt="Article image" loading="lazy">
+                    </div>
+                    <div class="article-body">
+                        <div class="article-meta">
+                            <span><i class="fa-regular fa-calendar-days" style="margin-right: 4px; color: var(--secondary);"></i> ${art.published || 'Recently'}</span>
+                            <span style="color: #64748b;"><i class="fa-solid fa-shield-halved"></i> Verified Source</span>
+                        </div>
+                        <div class="article-title">${art.title}</div>
+                        <div class="ai-summary-card">
+                            <div class="ai-summary-header">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Summary
+                            </div>
+                            <div class="ai-summary-content">
+                                ${summaryText}
+                            </div>
+                        </div>
+                        <div class="article-footer">
+                            <button onclick="handleBookmarkClick(this, event)" class="btn-bookmark-action" data-art-id="${art.id}" data-title="${(art.title || '').replace(/"/g, '&quot;')}" data-link="${art.link}" data-source="${art.source}" data-published="${art.published}" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 4px 10px; font-size: 12px; color: #cbd5e1; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
+                                <i class="fa-regular fa-bookmark"></i> Save
+                            </button>
+                            <span class="read-more-link">Open Story <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                        </div>
+                    </div>
+                </a>
+            `;
+            return wrapper;
+        }
+
+        function handleBookmarkClick(btn, event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            const id = btn.dataset.artId;
+            const title = btn.dataset.title;
+            const link = btn.dataset.link;
+            const source = btn.dataset.source;
+            const published = btn.dataset.published;
+            toggleBookmark(id, title, link, source, published);
+        }
+
+        function toggleBookmark(artId, title, link, source, published) {
+            let bookmarks = JSON.parse(localStorage.getItem('techcore_bookmarks') || '[]');
+            const index = bookmarks.findIndex(b => b.id === artId);
+            if (index > -1) {
+                bookmarks.splice(index, 1);
+            } else {
+                bookmarks.push({ id: artId, title, link, source, published });
+            }
+            localStorage.setItem('techcore_bookmarks', JSON.stringify(bookmarks));
+            updateBookmarkButtons();
+        }
+
+        function updateBookmarkButtons() {
+            const bookmarks = JSON.parse(localStorage.getItem('techcore_bookmarks') || '[]');
+            const ids = new Set(bookmarks.map(b => b.id));
+            document.querySelectorAll('.btn-bookmark-action').forEach(btn => {
+                const id = btn.dataset.artId;
+                if (ids.has(id)) {
+                    btn.innerHTML = '<i class="fa-solid fa-bookmark" style="color: #c084fc;"></i> Saved';
+                    btn.style.borderColor = 'rgba(168, 85, 247, 0.4)';
+                    btn.style.background = 'rgba(168, 85, 247, 0.15)';
+                } else {
+                    btn.innerHTML = '<i class="fa-regular fa-bookmark"></i> Save';
+                    btn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                    btn.style.background = 'rgba(255, 255, 255, 0.04)';
+                }
+            });
+        }
+
+        async function loadMoreArticles() {
+            if (feedLoading || !feedHasMore) return;
+            feedLoading = true;
+
+            const loadingIndicator = document.getElementById('infiniteScrollLoading');
+            const endIndicator = document.getElementById('infiniteScrollEnd');
+            if (loadingIndicator) loadingIndicator.style.display = 'block';
+
+            const searchInput = document.getElementById('searchArticles');
+            const query = searchInput ? searchInput.value.trim() : '';
+            const nextPage = feedPage + 1;
+
+            try {
+                const url = `/api/articles/feed?page=${nextPage}&limit=40&category=${encodeURIComponent(currentCategory)}&search=${encodeURIComponent(query)}`;
+                const res = await fetch(url);
+                if (res.ok) {
+                    const data = await res.json();
+                    feedPage = data.page;
+                    feedHasMore = data.has_more;
+
+                    const grid = document.getElementById('articlesGrid');
+                    if (data.articles && data.articles.length > 0) {
+                        data.articles.forEach(art => {
+                            const cardEl = buildCardElement(art);
+                            grid.appendChild(cardEl);
+                        });
+                        init3DCardTilt();
+                    }
+
+                    if (!feedHasMore) {
+                        if (endIndicator) endIndicator.style.display = 'block';
+                    }
+                }
+            } catch (err) {
+                console.error('Error fetching 7-day news feed:', err);
+            } finally {
+                feedLoading = false;
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
+            }
+        }
+
+        async function resetAndLoadFeed() {
+            feedPage = 1;
+            feedHasMore = true;
+            feedLoading = true;
+
+            const grid = document.getElementById('articlesGrid');
+            const loadingIndicator = document.getElementById('infiniteScrollLoading');
+            const endIndicator = document.getElementById('infiniteScrollEnd');
+
+            if (loadingIndicator) loadingIndicator.style.display = 'block';
+            if (endIndicator) endIndicator.style.display = 'none';
+
+            const searchInput = document.getElementById('searchArticles');
+            const query = searchInput ? searchInput.value.trim() : '';
+
+            try {
+                const url = `/api/articles/feed?page=1&limit=40&category=${encodeURIComponent(currentCategory)}&search=${encodeURIComponent(query)}`;
+                const res = await fetch(url);
+                if (res.ok) {
+                    const data = await res.json();
+                    feedHasMore = data.has_more;
+                    grid.innerHTML = '';
+
+                    if (data.articles && data.articles.length > 0) {
+                        data.articles.forEach(art => {
+                            const cardEl = buildCardElement(art);
+                            grid.appendChild(cardEl);
+                        });
+                        init3DCardTilt();
+                    } else {
+                        grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1; padding: 60px 20px; color: var(--text-muted); font-size: 15px;"><i class="fa-solid fa-magnifying-glass" style="font-size: 28px; margin-bottom: 12px; display: block;"></i> No stories found matching this query in the last 7 days.</div>';
+                    }
+
+                    if (!feedHasMore && data.articles.length > 0) {
+                        if (endIndicator) endIndicator.style.display = 'block';
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading initial feed:', err);
+            } finally {
+                feedLoading = false;
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
+            }
+        }
+
+        function filterCategory(categoryName, element) {
+            currentCategory = categoryName;
+            document.querySelectorAll('.category-filter .pill').forEach(pill => pill.classList.remove('active'));
+            element.classList.add('active');
+            resetAndLoadFeed();
+        }
+
+        function filterArticles() {
+            clearTimeout(searchDebounce);
+            searchDebounce = setTimeout(resetAndLoadFeed, 300);
+        }
+
+        // Setup Intersection Observer for Infinite Scrolling
+        function initInfiniteScrollObserver() {
+            const sentinel = document.getElementById('infiniteScrollSentinel');
+            if (!sentinel) return;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && feedHasMore && !feedLoading) {
+                        loadMoreArticles();
+                    }
+                });
+            }, {
+                rootMargin: '400px' // Start loading 400px before user hits bottom
+            });
+
+            observer.observe(sentinel);
+        }
+
+        /* ==========================================================================
+           Auth Modal Operations
+           ========================================================================== */
+        function showAuthModal() {
+            toggleModal('authModal', true);
+            showRegister();
+        }
+        function closeAuthModal() {
+            toggleModal('authModal', false);
+        }
+
+        function showRegister() {
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerTab').className = 'btn btn-primary';
+            document.getElementById('loginTab').className = 'btn btn-secondary';
+        }
+
+        function showLogin() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerTab').className = 'btn btn-secondary';
+            document.getElementById('loginTab').className = 'btn btn-primary';
+        }
+
+        function showMessage(text, isError = false) {
+            const messageDiv = document.getElementById('authMessage');
+            messageDiv.style.display = 'block';
+            messageDiv.style.background = isError ? 'rgba(229, 62, 62, 0.15)' : 'rgba(72, 187, 120, 0.15)';
+            messageDiv.style.border = isError ? '1px solid rgba(229, 62, 62, 0.3)' : '1px solid rgba(72, 187, 120, 0.3)';
+            messageDiv.style.color = isError ? '#feb2b2' : '#c6f6d5';
+            messageDiv.innerHTML = text;
+        }
+
+        async function register() {
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const name = document.getElementById('regName').value;
+            
+            if (!email || !password) {
+                showMessage('Please fill in email and password', true);
+                return;
+            }
+            
+            try {
+                const response = await fetch('/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, full_name: name })
+                });
+                
+                if (response.ok) {
+                    showMessage('Account created successfully! Logging in...');
+                    setTimeout(async () => {
+                        const formData = new FormData();
+                        formData.append('username', email);
+                        formData.append('password', password);
+                        
+                        const tokenResponse = await fetch('/auth/token', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        if (tokenResponse.ok) {
+                            const tokenData = await tokenResponse.json();
+                            localStorage.setItem('authToken', tokenData.access_token);
+                            window.location.href = '/dashboard';
+                        }
+                    }, 1500);
+                } else {
+                    const error = await response.json();
+                    showMessage(error.detail || 'Registration failed', true);
+                }
+            } catch (error) {
+                showMessage('Network error. Please try again.', true);
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showMessage('Please fill in email and password', true);
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('username', email);
+                formData.append('password', password);
+                
+                const response = await fetch('/auth/token', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('authToken', data.access_token);
+                    showMessage('Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1500);
+                } else {
+                    showMessage('Invalid email or password', true);
+                }
+            } catch (error) {
+                showMessage('Network error. Please try again.', true);
+            }
+        }
+
+        async function handleGoogleSignIn(response) {
+            try {
+                showMessage('Authenticating with Google...');
+                const res = await fetch('/auth/google', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id_token: response.credential })
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('authToken', data.access_token);
+                    showMessage('Google Sign-In successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1000);
+                } else {
+                    const err = await res.json();
+                    showMessage(err.detail || 'Google Authentication failed', true);
+                }
+            } catch (error) {
+                showMessage('Google Authentication error. Please try again.', true);
+            }
+        }
+
+        let techHistoryMilestones = [];
+        let currentMilestoneIndex = 0;
+
+        function updateLiveCalendarAndClock() {
+            try {
+                const now = new Date();
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                
+                const dayName = days[now.getDay()];
+                const dateNum = String(now.getDate()).padStart(2, '0');
+                const monthName = months[now.getMonth()];
+                const yearNum = now.getFullYear();
+
+                const dayEl = document.getElementById('currentDayOfWeek');
+                const dateMonthEl = document.getElementById('currentDateMonth');
+                const yearEl = document.getElementById('currentYear');
+
+                if (dayEl) dayEl.textContent = dayName;
+                if (dateMonthEl) dateMonthEl.textContent = `${dateNum} ${monthName}`;
+                if (yearEl) yearEl.textContent = yearNum;
+
+                // Live Ticking Clock (IST / Local)
+                const hours = String(now.getHours()).padStart(2, '0');
+                const mins = String(now.getMinutes()).padStart(2, '0');
+                const secs = String(now.getSeconds()).padStart(2, '0');
+                const clockEl = document.getElementById('liveDigitalClock');
+                if (clockEl) clockEl.textContent = `${hours}:${mins}:${secs}`;
+            } catch (e) {
+                console.error('Calendar widget error:', e);
+            }
+        }
+
+        async function loadTechHistory() {
+            try {
+                const res = await fetch('/api/tech-history/today');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.milestones && data.milestones.length > 0) {
+                        techHistoryMilestones = data.milestones;
+                        currentMilestoneIndex = 0;
+                        renderCurrentMilestone();
+                    }
+                }
+            } catch (e) {
+                console.error('Error fetching tech history:', e);
+            }
+        }
+
+        function renderCurrentMilestone() {
+            if (!techHistoryMilestones || techHistoryMilestones.length === 0) return;
+            const item = techHistoryMilestones[currentMilestoneIndex];
+            const yearEl = document.getElementById('historyYear');
+            const titleEl = document.getElementById('historyTitle');
+            const factEl = document.getElementById('historyFact');
+
+            if (yearEl) yearEl.textContent = item.year || '';
+            if (titleEl) titleEl.textContent = item.title || '';
+            if (factEl) factEl.textContent = `"${item.fact || ''}"`;
+        }
+
+        function nextTechHistoryMilestone(e) {
+            if (e) { e.preventDefault(); e.stopPropagation(); }
+            if (!techHistoryMilestones || techHistoryMilestones.length <= 1) return;
+            currentMilestoneIndex = (currentMilestoneIndex + 1) % techHistoryMilestones.length;
+            renderCurrentMilestone();
+        }
+
+        function toggleTechHistoryCard(e) {
+            if (e) { e.preventDefault(); e.stopPropagation(); }
+            const card = document.getElementById('techHistoryContainer');
+            const toggleCard = document.getElementById('techFactToggleBtn');
+            const btnText = toggleCard ? toggleCard.querySelector('.explore-btn-text') : null;
+
+            if (card) {
+                const isActive = card.classList.toggle('active');
+                if (toggleCard) {
+                    toggleCard.classList.toggle('active', isActive);
+                    toggleCard.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+                }
+                if (btnText) {
+                    btnText.textContent = isActive ? 'Close' : 'Explore';
+                }
+            }
+        }
+
+        // Initialize on DOM Ready
+        document.addEventListener('DOMContentLoaded', () => {
+            updateLiveCalendarAndClock();
+            setInterval(updateLiveCalendarAndClock, 1000);
+            loadTechHistory();
+            initThreeJS();
+            init3DCardTilt();
+            initInfiniteScrollObserver();
+            updateBookmarkButtons();
+        });
+    </script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</body>
+</html>
